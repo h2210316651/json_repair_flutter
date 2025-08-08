@@ -15,11 +15,9 @@ class JsonRepairer {
   /// Returns the repaired JSON string
   String repair(String malformedJson) {
     String result = malformedJson.trim();
-
     for (final strategy in _strategies) {
       result = strategy.apply(result);
     }
-
     return result;
   }
 

@@ -10,7 +10,10 @@ class RemoveLeadingTrailingCommasStrategy implements RepairStrategy {
     // Remove leading commas
     json = json.replaceAll(RegExp(r'(?<=[\[\{,]\s*),'), '');
     // Remove trailing commas before closing brackets
-    json = json.replaceAll(RegExp(r',(\s*[\]\}])'), r'$1');
+    json = json.replaceAllMapped(
+      RegExp(r',(\s*[\]\}])'),
+      (match) => match.group(1)!,
+    );
     return json;
   }
 }
@@ -75,7 +78,10 @@ class FixSingleQuotesStrategy implements RepairStrategy {
 class RemoveTrailingCommasStrategy implements RepairStrategy {
   @override
   String apply(String json) {
-    return json.replaceAll(RegExp(r',\s*([}\]])'), r'$1');
+    return json.replaceAllMapped(
+      RegExp(r',\s*([}\]])'),
+      (match) => match.group(1)!,
+    );
   }
 }
 
@@ -91,7 +97,7 @@ class FixMissingQuotesAroundValuesStrategy implements RepairStrategy {
         if (value == 'true' || value == 'false' || value == 'null') {
           return match.group(0)!;
         }
-        return ': "${value}"';
+        return ': "$value"';
       },
     );
   }
@@ -108,23 +114,19 @@ class AddMissingClosingBracesStrategy implements RepairStrategy {
 
     for (int i = 0; i < json.length; i++) {
       final char = json[i];
-
       if (escaped) {
         result.write(char);
         escaped = false;
         continue;
       }
-
       if (char == '\\' && inString) {
         escaped = true;
         result.write(char);
         continue;
       }
-
       if (char == '"' && !escaped) {
         inString = !inString;
       }
-
       if (!inString) {
         if (char == '{') {
           stack.add('}');
@@ -136,15 +138,12 @@ class AddMissingClosingBracesStrategy implements RepairStrategy {
           }
         }
       }
-
       result.write(char);
     }
-
     // Add missing closing brackets
     while (stack.isNotEmpty) {
       result.write(stack.removeLast());
     }
-
     return result.toString();
   }
 }
