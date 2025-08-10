@@ -1,6 +1,6 @@
 name: json_repair_flutter
 description: "A Flutter package to repair malformed JSON strings, similar to Python's json_repair"
-version: 2.0.0
+version: 2.0.2
 repository: https://github.com/h2210316651/json_repair_flutter.git
 homepage: https://github.com/h2210316651/json_repair_flutter.git
 
